@@ -251,7 +251,7 @@ if __name__ == "__main__":
     qd_eval_dataloader = DataLoader(qd_eval_dataset, batch_size=1, shuffle=False, 
                                     num_workers=0, generator=torch.Generator(device='cuda'),
                                     collate_fn=functools.partial(quickDrawCollateFn, batch_size=1))
-
+    
     # Evaluate the data
     qd_model.train(False)
     for i, batch in enumerate(qd_eval_dataloader):
@@ -265,7 +265,12 @@ if __name__ == "__main__":
         print("Expected: ", actual_labels)
         print()
         print(" --> PREDICTED CLASS: ", classes[predicted_labels[0].item()])
+        print(classes[predicted_labels[0].item()]) # This line is here to skip parsing in Unreal
         print()
+
+    if len(samples) == 0:
+        print("Empty drawing sent for evaluation")
+        print("Empty") # This line is here to skip parsing in Unreal
 
     """
 
