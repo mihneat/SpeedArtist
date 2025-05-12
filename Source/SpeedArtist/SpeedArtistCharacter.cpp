@@ -108,22 +108,16 @@ void ASpeedArtistCharacter::Look(const FInputActionValue& Value)
 void ASpeedArtistCharacter::StartDrawingInput(const FInputActionValue& Value)
 {
 	// UE_LOG(LogTemp, Display, TEXT("[ASpeedArtistCharacter] Started drawing!"));
-	
-	// TODO: Mark the beginning of a stroke
 }
 
 void ASpeedArtistCharacter::DrawInput(const FInputActionValue& Value)
 {
 	// UE_LOG(LogTemp, Display, TEXT("[ASpeedArtistCharacter] Drawing.."));
-	
-	// TODO: Paint the canvas and store the points
 }
 
 void ASpeedArtistCharacter::StopDrawingInput(const FInputActionValue& Value)
 {
 	// UE_LOG(LogTemp, Display, TEXT("[ASpeedArtistCharacter] Stopped drawing!!"));
-	
-	// TODO: End the current stroke
 }
 
 void ASpeedArtistCharacter::ConfirmInput(const FInputActionValue& Value)

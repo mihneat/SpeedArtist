@@ -7,14 +7,24 @@
 #include "CanvasManager.generated.h"
 
 
+class UCanvasManager;
+class UMainCanvasWidget;
 struct FPainting;
 class ACanvasArea;
 class APlayerCharacter;
 
+enum EDrawingState
+{
+	WaitingForStart,
+	Drawing,
+	Evaluating,
+	RoundEnded
+};
+
 class SPEEDARTIST_API FRunOutputThroughModel : public FRunnable
 {
 public:
-	FRunOutputThroughModel(FString FullFilePath);
+	FRunOutputThroughModel(FString FullFilePath, UCanvasManager* CanvasManagerRef);
 	
 	virtual bool Init() override;
 	virtual uint32 Run() override;
@@ -22,6 +32,7 @@ public:
 
 	FRunnableThread* Thread = nullptr;
 	FString FilePath;
+	UCanvasManager* CanvasManager;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -36,18 +47,25 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	
+	void BeginRound();
+	void EndRound();
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	void StartGame();
 
-	UFUNCTION(BlueprintCallable)
-	void NotifyCreated();
+	UPROPERTY(EditAnywhere, Category="Widget References")
+	TSubclassOf<UUserWidget> MainWidgetBP;
+	UMainCanvasWidget* MainCanvasWidget;
 
 private:
 	UFUNCTION(BlueprintCallable)
 	void HandleOnConfirm(APlayerCharacter* Player);
-	
+	void CheckEvaluationDone();
+
 	UFUNCTION(BlueprintCallable)
 	void HandleOnReset(APlayerCharacter* Player);
 	
@@ -65,8 +83,22 @@ private:
 	UPROPERTY(EditInstanceOnly)
 	ACanvasArea* CanvasArea;
 
+	void StartGameDelayed();
 	void ChooseRandomClass();
+
+	void ProcessEvaluationResult();
 
 	TArray<FString> Classes{ "airplane", "ant", "axe", "bed" };
 	FString CurrentClass;
+
+	EDrawingState CurrentDrawingState = WaitingForStart;
+
+	bool ReceivedNewEvaluationResult = false;
+	int ResponseCode = 0;
+	FString StandardOutput;
+	FString StandardError;
+
+	FTimerHandle CurrentTimerHandle;
+
+	friend class FRunOutputThroughModel;
 };
